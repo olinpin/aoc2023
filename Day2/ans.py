@@ -8,12 +8,6 @@ def parseInput(file):
 
 input = parseInput("input.in").split("\n")
 
-# input = """Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-# Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-# Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
-# Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-# Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green""".split("\n")
-
 
 def part1():
     possible = 0
@@ -46,3 +40,33 @@ def isGamePossible(gameID, line):
                 if num > maxBlue:
                     return 0
     return gameID
+
+
+def part2():
+    power = 0
+    for line in input:
+        line = line.split(": ")
+        if len(line) == 1:
+            continue
+        line = line[1].split("; ")
+        power += fewestPossible(line)
+
+    print(power)
+
+
+def fewestPossible(line):
+    maxRed = 0
+    maxGreen = 0
+    maxBlue = 0
+    for cubes in line:
+        match = re.findall("(\\d+) (\\w+)", cubes)
+        for num, col in match:
+            num = int(num)
+            if col == "red":
+                maxRed = max(maxRed, num)
+            elif col == "green":
+                maxGreen = max(maxGreen, num)
+            elif col == "blue":
+                maxBlue = max(maxBlue, num)
+    power = maxRed * maxBlue * maxGreen
+    return power
