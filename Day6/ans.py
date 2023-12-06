@@ -10,7 +10,6 @@ fileInput = parseInput("input.in")
 fileInput = fileInput.split("\n")
 
 
-
 def possible(time, distance):
     possibilities = 0
     for x in range(time):
@@ -33,3 +32,12 @@ def part1():
     for x in total[1:]:
         res *= x
     print(res)
+
+
+def part2():
+    time = re.findall("\\d+", fileInput[0])
+    distance = re.findall("\\d+", fileInput[1])
+    time = int("".join(time))
+    distance = int("".join(distance))
+    possibilities = possible(time, distance)
+    print(possibilities)
