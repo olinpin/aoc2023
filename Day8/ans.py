@@ -1,4 +1,5 @@
 import re
+from math import lcm
 
 
 def parseInput(file):
@@ -6,39 +7,59 @@ def parseInput(file):
         return f.read()
 
 
-class WastelandMap:
-    def __init__(self, name, left, right):
-        self.name = name
-        self.left = left
-        self.right = right
-
-    def __str__(self):
-        return f"{self.name} = [{self.left}, {self.right}]"
-
-
-fileInput = parseInput("input.in")
-
-
 def part1():
-    instructions, lines = fileInput.split("\n\n")
-    wasteland = []
+    wasteland = {}
     for line in lines.split("\n"):
         match = re.findall("\\w+", line)
         if len(match) == 0:
             continue
-        wasteland.append(WastelandMap(match[0], match[1], match[2]))
+        wasteland[match[0]] = (match[1], match[2])
     next = "AAA"
     end = "ZZZ"
     index = 0
     while next != end:
-        for w in wasteland:
-            if w.name == next:
-                currIndex = index % len(instructions)
-                if instructions[currIndex] == "R":
-                    next = w.right
-                    break
-                else:
-                    next = w.left
-                    break
+        currIndex = index % len(instructions)
+        i = 1 if instructions[currIndex] == "R" else 0
+        next = wasteland[next][i]
         index += 1
     print(index)
+
+
+def part2():
+    wasteland = {}
+    nexts = []
+    ends = []
+    for line in lines.split("\n"):
+        match = re.findall("\\w+", line)
+        aMatch = re.findall("..A ", line)
+        zMatch = re.findall("..Z ", line)
+        if len(match) == 0:
+            continue
+        wasteland[match[0]] = (match[1], match[2])
+        if len(aMatch) > 0:
+            nexts.append(match[0])
+        elif len(zMatch) > 0:
+            ends.append(match[0])
+    endLength = len(ends)
+    index = 0
+    match = False
+    doneBy = {}
+
+    while not match:
+        newNexts = []
+        currIndex = index % len(instructions)
+        i = 1 if instructions[currIndex] == "R" else 0
+        for next in nexts:
+            place = wasteland[next][i]
+            if place in ends:
+                doneBy[place] = index + 1
+            else:
+                newNexts.append(place)
+        match = len(doneBy.keys()) == endLength
+        nexts = newNexts
+        index += 1
+    print(lcm(*list(doneBy.values())))
+
+
+fileInput = parseInput("input.in")
+instructions, lines = fileInput.split("\n\n")
