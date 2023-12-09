@@ -6,7 +6,7 @@ def parseInput(file):
         return f.read()
 
 
-def part1():
+def part(part2=False):
     lines = inputFile.split("\n")
     allNums = 0
     for line in lines:
@@ -18,7 +18,14 @@ def part1():
         while not all(num == 0 for num in iters[-1]):
             data = [data[i+1] - data[i] for i in range(len(data)-1)]
             iters.append(data)
-        allNums += sum([num[-1] for num in iters])
+        if part2:
+            last = 0
+            iters.reverse()
+            for i in iters:
+                last = i[0] - last
+            allNums += last
+        else:
+            allNums += sum([num[-1] for num in iters])
     print(allNums)
 
 
