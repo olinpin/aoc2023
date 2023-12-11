@@ -103,7 +103,6 @@ def part2():
 
         current = row * len(field) + column
         currentSymbol = field[row][column]
-        field[row][column] = "X"
         path.append((row, column))
         if currentSymbol == "S":
             break
@@ -136,92 +135,33 @@ def part2():
                 row += 1
         step += 1
         last = current
-    # print(int(step / 2))
 
-    # for i in range(len(field)):
-    #     for j in range(len(field[0])):
-    #         # field != . ??? Is that wrong?
-    #         if ((i, j) not in path) and (field[i][j] != "." or i in (0, len(field)-1) or j in (0, len(field[0])-1)):
-    #             field[i][j] = "*"
+    s = "7" # I don't have the energy to do this automatically
+    row = 0
+    while row < len(field):
+        if "S" in field[row]:
+            field[row][field[row].index("S")] = s
+            break
+        row += 1
 
-    insides1 = []
-    partialInsides = []
+    insides = []
     for row in range(len(field)):
-        partialInsides = []
-        inPath = False
         for column in range(len(field[0])):
             if (row, column) in path:
-                insides1 += partialInsides
-                partialInsides = []
-                if (row, column+1) in path or (row, column-1) not in path:
-                    inPath = False
-                    continue
-                else:
-                    inPath = True
-                # print(row, column, "Set ", inPath)
-                # insides += currentInsides
-                # for r, c in currentInsides:
-                #     field[r][c] = "I"
-                # currentInsides = []
-            elif field[row][column] == ".":
-                if inPath:
-                    insides1.append((row, column))
-                    # field[row][column] = "I"
-            # elif (row, column) not in path:
-            #     if inPath:
-            #         field[row][column] = "X"
-            #     else:
-            #         field[row][column] = "Y"
-            # else:
-            #     field[row][column] = "O"
+                continue
 
+            x, y = row, column
+            pipes = 0
+            while x < len(field) and y < len(field[0]):
+                if (x, y) in path and field[x][y] not in ("7", "L"):
+                    pipes += 1
+                x += 1
+                y += 1
 
+            if pipes % 2 == 1:
+                insides.append((row, column))
 
-    insides2 = []
-    for column in range(len(field[0])):
-        inPath = False
-        partialInsides = []
-        for row in range(len(field)):
-            if (row, column) in path:
-                insides2 += partialInsides
-                partialInsides = []
-                if (row+1, column) in path or (row-1, column) not in path:
-                    inPath = False
-                    continue
-                else:
-                    inPath = True
-                # print(row, column, "Set ", inPath)
-                # insides += currentInsides
-                # for r, c in currentInsides:
-                #     field[r][c] = "I"
-                # currentInsides = []
-            elif field[row][column] == ".":
-                if inPath:
-                    partialInsides.append((row, column))
-                    # field[row][column] = "I"
-            # elif (row, column) not in path:
-            #     if inPath:
-                    # field[row][column] = "X"
-            #     else:
-            #         field[row][column] = "Y"
-            # else:
-            #     field[row][column] = "O"
-    # print(insides1)
-    # print(len(insides1))
-    # print(insides2)
-    # print(len(insides2))
-    # print(list(set(insides1) & set(insides2)))
-    print(len(list(set(insides1) & set(insides2))))
-    for row, column in list(set(insides1) & set(insides2)):
-        field[row][column] = "I"
-
-    res = ""
-    for x in field[:]:
-        res += "".join(x) + "\n"
-    print(res)
+    print(len(insides))
 
 
 inputFile = parseInput("input.in")
-inputFile = parseInput("example4.in")
-
-part2()
