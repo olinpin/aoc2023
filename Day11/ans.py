@@ -3,10 +3,12 @@ def parseInput(file):
         return f.read()
 
 
-def part1():
+def part(part2=False):
     lines = fileInput.splitlines()
     lines = [[*line] for line in lines]
     emptyCols = [*range(len(lines))]
+
+    # get empty columns
     for index in range(len(lines)):
         line = lines[index]
         if "#" in line:
@@ -16,24 +18,18 @@ def part1():
                 if i in emptyCols:
                     emptyCols.remove(i)
 
-    count = 0
-    for i in emptyCols:
-        for index in range(len(lines)):
-            lines[index].insert(i+count, ".")
-        count += 1
-
-    duplicateRows = []
+    # get empty rows
+    emptyRows = []
     for i in range(len(lines)):
         line = lines[i]
         if "#" not in line:
-            duplicateRows.append(i)
-    count = 0
-    for i in duplicateRows:
-        lines.insert(i + count, lines[i + count])
-        count += 1
+            emptyRows.append(i)
 
     # shortest path
     hashtags = []
+    increase = 1
+    if part2:
+        increase = 1_000_000 - 1
     for row in range(len(lines)):
         line = lines[row]
         if "#" not in line:
@@ -41,7 +37,9 @@ def part1():
         i = -1
         for _ in range(line.count("#")):
             i = line.index("#", i+1)
-            hashtags.append((row, i))
+            newRow = sum([int(row > num) for num in emptyRows]) * increase + row
+            newI = sum([int(i > num) for num in emptyCols]) * increase + i
+            hashtags.append((newRow, newI))
 
     length = 0
     count = 1
@@ -55,3 +53,4 @@ def part1():
 
 
 fileInput = parseInput("input.in")
+part()
