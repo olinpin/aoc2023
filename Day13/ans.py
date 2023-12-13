@@ -3,19 +3,40 @@ def parseInput(file):
         return f.read()
 
 
-def part1():
+def part(part2=False):
     patterns = fileInput.split("\n\n")
     res = 0
     for pattern in patterns:
         splitted = pattern.split("\n")
-        rows = findDuplicates(splitted)
         trans = transpose(pattern)
-        columns = findDuplicates(trans)
-        if rows >= columns:
-            res += 100 * rows
+        if part2:
+            rows = findDuplicatesPart2(splitted)
+            columns = findDuplicatesPart2(trans)
         else:
-            res += columns
+            rows = findDuplicates(splitted)
+            columns = findDuplicates(trans)
+        res += max(100 * rows, columns)
     print(res)
+
+
+def findDuplicatesPart2(splitted):
+    for index in range(len(splitted)):
+        bottomHalf = splitted[index:]
+        topHalf = splitted[:index]
+        topHalf.reverse()
+
+        discrepencies = 0
+        for upper, lower in zip(topHalf, bottomHalf):
+            for upper_char, lower_char in zip(upper, lower):
+                if upper_char != lower_char:
+                    discrepencies += 1
+                if discrepencies > 1:
+                    break
+            if discrepencies > 1:
+                break
+        if discrepencies == 1:
+            return index
+    return 0
 
 
 def findDuplicates(splitted):
@@ -55,3 +76,5 @@ def strprint(lines):
 
 
 fileInput = parseInput("input.in")
+
+part(True)
