@@ -20,13 +20,47 @@ def part1():
     print(total)
 
 
+def part2():
+    lines = fileInput.strip().splitlines()
+    for line in lines:
+        energized.append(["." for _ in line])
+        grid.append([*line])
+    maxTotal = 0
+    for y in range(len(grid)):
+        for x in (0, len(grid[0])-1):
+            energized.clear()
+            cache.clear()
+            for line in lines:
+                energized.append(["." for _ in line])
+            addLight(x, y, "right")
+            total = 0
+            for line in energized:
+                total += sum(1 for ch in line if ch == "#")
+            maxTotal = max(total, maxTotal)
+
+    for x in range(len(grid[0])):
+        for y in (0, len(grid)-1):
+            energized.clear()
+            cache.clear()
+            for line in lines:
+                energized.append(["." for _ in line])
+            addLight(x, y, "down")
+            total = 0
+            for line in energized:
+                total += sum(1 for ch in line if ch == "#")
+            maxTotal = max(total, maxTotal)
+    print(maxTotal)
+
+
 def strprint(lines):
     for line in lines:
         print("".join(line))
+    print()
 
 
 cache = {}
-def addLight(x, y, split=0, direction="right"):
+def addLight(x, y, direction="right"):
+
     if (x, y, direction) in cache:
         return
     cache[(x, y, direction)] = True
@@ -43,8 +77,8 @@ def addLight(x, y, split=0, direction="right"):
                     direction = "down"
                     break
                 elif grid[y][x] == "|":
-                    addLight(x, y, split+1, "up")
-                    addLight(x, y, split+1, "down")
+                    addLight(x, y, "up")
+                    addLight(x, y, "down")
                     return
             else:
                 return
@@ -59,8 +93,8 @@ def addLight(x, y, split=0, direction="right"):
                     direction = "up"
                     break
                 elif grid[y][x] == "|":
-                    addLight(x, y, split+1, "up")
-                    addLight(x, y, split+1, "down")
+                    addLight(x, y, "up")
+                    addLight(x, y, "down")
                     return
             else:
                 return
@@ -75,8 +109,8 @@ def addLight(x, y, split=0, direction="right"):
                     direction = "right"
                     break
                 elif grid[y][x] == "-":
-                    addLight(x, y, split+1, "left")
-                    addLight(x, y, split+1, "right")
+                    addLight(x, y, "left")
+                    addLight(x, y, "right")
                     return
             else:
                 return
@@ -91,8 +125,8 @@ def addLight(x, y, split=0, direction="right"):
                     direction = "left"
                     break
                 elif grid[y][x] == "-":
-                    addLight(x, y, split+1, "left")
-                    addLight(x, y, split+1, "right")
+                    addLight(x, y, "left")
+                    addLight(x, y, "right")
                     return
             else:
                 return
