@@ -69,6 +69,107 @@ class Node:
         return f"{self.direction}, {self.straight}, ({self.x}, {self.y}), start: ({self.startX}, {self.startY})"
 
 
+def part2():
+    lines = fileInput.strip().splitlines()
+    grid = [[int(num) for num in line] for line in lines]
+
+    right = (Direction.RIGHT, 0, 1, 0, 0, 0, Direction.RIGHT, 0)
+    down =  (Direction.DOWN, 0, 0, 1, 0, 0, Direction.DOWN, 0)
+    heapq.heappush(remaining, (0, down))
+    heapq.heappush(remaining, (0, right))
+
+    shortestPath[(0,0, Direction.RIGHT, 0)] = []
+    shortestPath[(0,0, Direction.DOWN, 0)] = []
+
+    shortestPathNum[(0,0, Direction.RIGHT, 0)] = 0
+    shortestPathNum[(0,0, Direction.DOWN, 0)] = 0
+
+    while len(remaining) > 0:
+        dijkstra2(grid)
+
+    solutions = []
+    for key in shortestPathNum.keys():
+        if key[1] == len(grid)-1 and key[0] == len(grid[0])-1:
+            solutions.append(shortestPathNum[key])
+    print(solutions)
+    print(min(solutions))
+
+
+def dijkstra2(grid: List[List[int]]):
+    next = heapq.heappop(remaining)[1]
+
+
+    currentKey = (next[2], next[3], next[0], next[1])
+    previousKey = (next[4], next[5], next[6], next[7])
+    if currentKey in shortestPath:
+        minimum = shortestPathNum[currentKey]
+        shortest = shortestPathNum[previousKey] + grid[next[3]][next[2]]
+        if minimum > shortest:
+            shortestPathNum[currentKey] = shortest
+            shortestPath[currentKey] = shortestPath[previousKey] + [next[0]]
+            addDirections2(next, grid)
+    else:
+        shortestPathNum[currentKey] = shortestPathNum[previousKey] + grid[next[3]][next[2]]
+        shortestPath[currentKey] = shortestPath[previousKey] + [next[0]]
+
+        addDirections2(next, grid)
+
+
+def addDirections2(next, grid):
+    currentCost = shortestPathNum[(next[2], next[3], next[0], next[1])]
+    min = 3
+    max = 10
+    if next[3] == len(grid) -1 and next[2] == len(grid[0]) - 1:
+        return
+    mustGoStraight = next[1] < min
+
+    
+    if next[3] > 0 and next[0] != Direction.DOWN:
+        if (next[0] == Direction.UP and (mustGoStraight or next[3] > 0)) or (next[3] - min >= 0 and not mustGoStraight):
+            # go up
+            direction = Direction.UP
+            straight = 0 if next[0] != direction else next[1] + 1
+
+            if straight < max:
+                node = (direction, straight, next[2], next[3] - 1, next[2], next[3], next[0], next[1])
+                # key = (node[2], node[3], node[0], node[1])
+                newCost = currentCost + grid[node[3]][node[2]]
+                # if key not in shortestPathNum or newCost < shortestPathNum[key]:
+                heapq.heappush(remaining, (newCost, node))
+
+    if next[3] < len(grid) - 1 and next[0] != Direction.UP:
+        if (next[0] == Direction.DOWN and (mustGoStraight or next[3] < len(grid)-1)) or (next[3] + min <= len(grid)-1 and not mustGoStraight):
+            # go down
+            direction = Direction.DOWN
+            straight = 0 if next[0] != direction else next[1] + 1
+
+            if straight < max:
+                node = (direction, straight, next[2], next[3] + 1, next[2], next[3], next[0], next[1])
+                newCost = currentCost + grid[node[3]][node[2]]
+                heapq.heappush(remaining, (newCost, node))
+    if next[2] > 0 and next[0] != Direction.RIGHT:
+        if (next[0] == Direction.LEFT and (mustGoStraight or next[2] > 0)) or (next[2] - min >= 0 and not mustGoStraight):
+            # go left
+            direction = Direction.LEFT
+            straight = 0 if next[0] != direction else next[1] + 1
+            if straight < max: 
+                node = (direction, straight, next[2] - 1, next[3], next[2], next[3], next[0], next[1])
+                # key = (node[2], node[3], node[0], node[1])
+                newCost = currentCost + grid[node[3]][node[2]]
+                # if key not in shortestPathNum or newCost < shortestPathNum[key]:
+                heapq.heappush(remaining, (newCost, node))
+    if next[2] < len(grid[0]) - 1 and next[0] != Direction.LEFT:
+        if (next[0] == Direction.RIGHT and (mustGoStraight or next[2] < len(grid[0]) - 1)) or (next[2] + min <= len(grid[0])-1 and not mustGoStraight):
+            # go right
+            direction = Direction.RIGHT
+            straight = 0 if next[0] != direction else next[1] + 1
+
+            if straight < max:
+                node = (direction, straight, next[2] + 1, next[3], next[2], next[3], next[0], next[1])
+                # key = (node[2], node[3], node[0], node[1])
+                newCost = currentCost + grid[node[3]][node[2]]
+                # if key not in shortestPathNum or newCost < shortestPathNum[key]:
+                heapq.heappush(remaining, (newCost, node))
 
 def part1():
     lines = fileInput.strip().splitlines()
@@ -170,4 +271,4 @@ def dijkstra(grid: List[List[int]]) -> int:
     # save to cache
 
 
-part1()
+part2()
