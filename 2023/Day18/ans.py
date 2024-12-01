@@ -8,7 +8,56 @@ def strprint(lines):
     for line in lines:
         print("".join(line))
 
-fileInput = parseInput("input.in")
+fileInput = parseInput("example.in")
+
+hexToDecDict = {
+    '0': 0,
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+    'a': 10,
+    'b': 11,
+    'c': 12,
+    'd': 13,
+    'e': 14,
+    'f': 15
+}
+
+def hexToInt(hex):
+    letters = list(hex)
+    num = 0
+    for i, letter in enumerate(letters):
+        num += hexToDecDict[letter] * (15**i)
+    return num
+
+def part2():
+    lines = fileInput.strip().splitlines()
+    instructions = []
+    hexInstructions = []
+    for line in lines:
+        match = re.findall('#(.*)\)', line)[0]
+        dir = int(match[-1])
+        if dir == 0:
+            hexInstructions.append(('R', match[:5]))
+        if dir == 1:
+            hexInstructions.append(('D', match[:5]))
+        if dir == 2:
+            hexInstructions.append(('L', match[:5]))
+        if dir == 3:
+            hexInstructions.append(('U', match[:5]))
+
+    for instruction in hexInstructions:
+        instructions.append((instruction[0], hexToInt(instruction[1])))
+    print(instructions)
+    # print(instructions)
+    dig(instructions)%
+
 
 def part1():
     lines = fileInput.strip().splitlines()
@@ -17,6 +66,9 @@ def part1():
         match = re.findall('([RULD]).(\d+)', line)[0]
         instructions.append((match[0], int(match[1])))
     # print(instructions)
+    dig(instructions)
+
+def dig(instructions):
     hole = [["#"]]
 
     currentX = 0
@@ -126,7 +178,7 @@ def part1():
                 coordsLeft.append(c)
 
     # print()
-    strprint(hole)
+    # strprint(hole)
     # for i, row in enumerate(hole):
     #     for j, col in enumerate(row):
     #         if hole[i][j] == ".":
@@ -140,4 +192,4 @@ def part1():
 
 
 
-part1()
+part2()
