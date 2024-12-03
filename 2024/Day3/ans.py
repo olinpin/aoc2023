@@ -13,3 +13,18 @@ def part1():
         for a, b in search:
             res += int(a) * int(b)
     print(res)
+
+
+def part2():
+    res = 0
+    multiply = True
+    for line in input:
+        search = re.findall("(do\(\))|(don't\(\))|mul\((\d{1,3}),(\d{1,3})\)", line)
+        for do, dont, a, b in search:
+            if do != '':
+                multiply = True
+            if dont != '':
+                multiply = False
+            if multiply and a != '' and b != '':
+                res += int(a) * int(b)
+    print(res)
