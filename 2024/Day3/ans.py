@@ -14,6 +14,8 @@ def part1():
             res += int(a) * int(b)
     print(res)
 
+def part1oneline():
+    print(sum([int(a) * int(b) for line in input for a,b in re.findall("mul\((\d{1,3}),(\d{1,3})\)", line)]))
 
 def part2():
     res = 0
