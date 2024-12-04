@@ -59,3 +59,27 @@ def checkCoord(letter: str, x: int, y: int, matrix: List[List[str]]) -> bool:
 
 def validCoordinates(x: int, y: int, matrix: List[List[str]]) -> bool:
     return x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[x])
+
+def part2():
+    matrix = [list(i) for i in input]
+    found = 0
+    for x in range(len(matrix)):
+        for y in range(len(matrix[x])):
+            found += int(search2(x, y, matrix))
+    print(found)
+
+def search2(x: int, y: int, matrix: List[List[str]]) -> bool:
+    originalX, originalY = x, y
+    cross = 0
+    if checkCoord("A", x, y, matrix):
+        tLeftX, tLeftY = topLeft(originalX, originalY)
+        tRightX, tRightY = topRight(originalX, originalY)
+        bLeftX, bLeftY = bottomLeft(originalX, originalY)
+        bRightX, bRightY = bottomRight(originalX, originalY)
+        cross += checkCoord("M", tLeftX, tLeftY, matrix) and checkCoord("S", bRightX, bRightY, matrix)
+        cross += checkCoord("S", tLeftX, tLeftY, matrix) and checkCoord("M", bRightX, bRightY, matrix)
+        cross += checkCoord("M", tRightX, tRightY, matrix) and checkCoord("S", bLeftX, bLeftY, matrix)
+        cross += checkCoord("S", tRightX, tRightY, matrix) and checkCoord("M", bLeftX, bLeftY, matrix)
+    return cross == 2
+
+part2()
